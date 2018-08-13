@@ -39,11 +39,11 @@ const USERS = [
 ];
 
 // ?user=ellen&pass=superSecretPassword
-// ?user=freddy&pass=password
+// ?user=freddy@business.com&pass=password
 
 function gateKeeper(req, res, next) {
     for (let i = 0; i < USERS.length; i++) {
-        if (req.query.user === USERS[i].firstName.toLowerCase() && req.query.pass === USERS[i].password){
+        if (req.query.user === USERS[i].userName && req.query.pass === USERS[i].password){
             const query = queryString.stringify(USERS[i]);
             res.redirect(`/api/users/me/user=${query}`);
         }
