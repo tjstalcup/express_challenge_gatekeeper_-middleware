@@ -40,15 +40,23 @@ const USERS = [
 
 // ?user=ellen&pass=superSecretPassword
 // ?user=freddy@business.com&pass=password
+// req.header.x-username-and-password
+/* {
+  x-user-agent: "Chrome",
+  x-username-and-password: "user=user@somewhere.com&pass=password"
+}*/
 
 function gateKeeper(req, res, next) {
+    const credentials = req.header["x-username-and-password"].split("&"); // ["user=user@somewhere.com","pass=password"]
     for (let i = 0; i < USERS.length; i++) {
-        if (req.query.user === USERS[i].userName && req.query.pass === USERS[i].password){
-            const query = queryString.stringify(USERS[i]);
-            res.redirect(`/api/users/me/user=${query}`);
+        if (credentials[0].replace("user=","") === USERS[i].userName && credentials[1].replace("pass=","") === USERS[i].password){
+            // const query = queryString.stringify(USERS[i]);
+            // res.redirect(`/api/users/me/user=${query}`);
+            req.user = USERS[i];
+            return next();
         }
     }
-    next();
+    return next();
 }
 
 app.use(gateKeeper);
